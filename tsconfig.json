@@ -1,0 +1,32 @@
+{
+    "compilerOptions": {
+      "baseUrl": ".",
+      "outDir": "lib",
+      "lib": ["es2019"],
+      "paths": {
+        "@archon/bridge/*": ["../bridge/src/*"],
+        "@archon/common/*": ["../common/src/*"],
+        "@archon/constants/*": ["../constants/*"],
+        "@archon/shared-frontend/*": ["../shared-frontend/src/*"],
+        "@archon/theme/*": ["../theme/src/*"],
+        "@archon/rsys/*": ["../rsys/*"],
+        "@archon/msys/*": ["../msys/src/*"],
+        "@archon/system-info/*": ["../system-info/*"],
+        "@archon/third-party/*": ["../third-party/node_modules/*"],
+        "messenger/*": ["src/messenger/*"],
+        "rn/*": ["src/*"],
+        "ui/*": ["src/ui/*"],
+      }
+    },
+    "references": [
+      {"path": "../bridge"},
+      {"path": "../common"},
+      {"path": "../constants"},
+      {"path": "../shared-frontend"},
+      {"path": "../rsys"},
+      {"path": "../theme"},
+      {"path": "../msys"}
+    ],
+    "include": ["src/**/*", "typings/**/*", "../../typings/**/*"],
+  }
+  
