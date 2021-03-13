@@ -13,7 +13,7 @@ import {
   ScrollView,
   View,
   Text,
-  StatusBar,
+  NativeModules,
 } from 'react-native';
 
 import {
@@ -23,6 +23,8 @@ import {
   DebugInstructions,
   ReloadInstructions,
 } from 'react-native/Libraries/NewAppScreen';
+
+import NativeModuleSample from './NativeModuleSample'
 
 const App: () => React$Node = () => {
   return (
@@ -63,7 +65,7 @@ const App: () => React$Node = () => {
                 Read the docs to discover what to do next:
               </Text>
             </View>
-            <LearnMoreLinks />
+            <NativeModuleSample />
           </View>
         </ScrollView>
       </SafeAreaView>
