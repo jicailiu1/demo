@@ -4,7 +4,8 @@
   xmlns="http://schemas.microsoft.com/appx/manifest/foundation/windows10"
   xmlns:mp="http://schemas.microsoft.com/appx/2014/phone/manifest"
   xmlns:uap="http://schemas.microsoft.com/appx/manifest/uap/windows10"
-  IgnorableNamespaces="uap mp">
+  xmlns:uap6="http://schemas.microsoft.com/appx/manifest/uap/windows10/6"
+  IgnorableNamespaces="uap mp uap6">
 
   <Identity
     Name="28206eb7-ffcb-45c1-9c11-ba6e94323421"
@@ -46,5 +47,6 @@
 
   <Capabilities>
     <Capability Name="internetClient" />
+    <uap6:Capability Name="graphicsCapture"/>
   </Capabilities>
 </Package>

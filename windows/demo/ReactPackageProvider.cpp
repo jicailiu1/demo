@@ -1,8 +1,6 @@
 #include "pch.h"
 #include "ReactPackageProvider.h"
 #include "NativeModules.h"
-#include "MediaStreaming.h"
-
 
 using namespace winrt::Microsoft::ReactNative;
 
