@@ -112,6 +112,8 @@
     </ClCompile>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClInclude Include="api.h" />
+    <ClInclude Include="d3d11interop.h" />
     <ClInclude Include="MediaStreaming.h" />
     <ClInclude Include="MainPage.h">
       <DependentUpon>MainPage.xaml</DependentUpon>

@@ -1,11 +1,18 @@
 #include "pch.h"
 #include "Mediastreaming.h"
+#include "d3d11interop.h"
 
 namespace winrt {
     using namespace Windows::Foundation;
     using namespace Windows::Graphics::Capture;
     using namespace Windows::ApplicationModel::Core;
     using namespace Microsoft::ReactNative;
+    using namespace Windows::Graphics::DirectX;
+    using namespace Windows::Graphics::DirectX::Direct3D11;
+    using namespace Windows::Graphics::Imaging;
+    using namespace Windows::Storage;
+    using namespace Windows::Storage::Streams;
+
 }
 
 struct awaitable_event
@@ -31,6 +38,45 @@ private:
       /* manual reset */ true, /* initial state */ false,
       nullptr)) };
 };
+
+void MediaStreaming::Capture() noexcept
+{
+    m_captureRequested = true;
+}
+
+winrt::fire_and_forget save(const winrt::IDirect3DSurface surface)
+{
+    try {
+        auto bitmap = co_await winrt::SoftwareBitmap::CreateCopyFromSurfaceAsync(surface);
+
+        auto file = co_await winrt::KnownFolders::CameraRoll().CreateFileAsync(L"save.jpg", winrt::CreationCollisionOption::ReplaceExisting);
+        auto outputStream = co_await file.OpenAsync(winrt::FileAccessMode::ReadWrite);
+        auto encoder = co_await winrt::BitmapEncoder::CreateAsync(winrt::BitmapEncoder::JpegEncoderId(), outputStream);
+        encoder.SetSoftwareBitmap(bitmap);
+        co_await encoder.FlushAsync();
+    }
+    catch (...) {
+        int a = 1;
+    }
+}
+
+
+void MediaStreaming::OnFrameArrived(
+    winrt::Direct3D11CaptureFramePool const& sender,
+    winrt::IInspectable const&)
+{
+    auto surface = sender.TryGetNextFrame().Surface();
+    auto frameTexture = GetDXGIInterfaceFromObject<ID3D11Texture2D>(surface);
+
+    if (m_captureRequested)
+    {
+        save(surface);
+        m_captureRequested = false;
+    }
+
+    onData(frameTexture.get());
+}
+
 
 winrt::fire_and_forget MediaStreaming::Start(std::string url) noexcept
 {
@@ -67,7 +113,18 @@ winrt::fire_and_forget MediaStreaming::Start(std::string url) noexcept
 
     //co_await pickEvent;
 
-    init(url.c_str(), m_d3dDevice.get(), &m_client);
+    m_framePool = winrt::Direct3D11CaptureFramePool::CreateFreeThreaded(
+        m_device,
+        winrt::DirectXPixelFormat::R8G8B8A8UIntNormalized,
+        1,
+        item.Size());
+    m_framePool.FrameArrived({ this, &MediaStreaming::OnFrameArrived });
+
+    init(url.c_str(), item.Size().Width, item.Size().Height, m_d3dDevice.get(), &m_client);
+    m_client->start();
+
+    m_session = m_framePool.CreateCaptureSession(item);
+    m_session.StartCapture();
 }
 
 void MediaStreaming::Initialize(React::ReactContext const& reactContext) noexcept
@@ -76,4 +133,8 @@ void MediaStreaming::Initialize(React::ReactContext const& reactContext) noexcep
     auto hr = D3D11CreateDevice(nullptr, D3D_DRIVER_TYPE_HARDWARE, nullptr, D3D11_CREATE_DEVICE_BGRA_SUPPORT, nullptr, 0, D3D11_SDK_VERSION, m_d3dDevice.put(),
         nullptr, nullptr);
     assert(SUCCEEDED(hr));
+
+    auto dxgiDevice = m_d3dDevice.as<IDXGIDevice>();
+    m_device = CreateDirect3DDevice(dxgiDevice.get());
+
 }

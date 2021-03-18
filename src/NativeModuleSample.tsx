@@ -22,7 +22,7 @@
  
  class NativeModuleSample extends Component {
  
-  key:string = "10159539268166518?s_bl=1&s_l=1&s_ps=1&s_psm=1&s_sw=0&s_vt=api_dev&a=AbxjrrkJKTTNAHnX";
+  key:string = "10159555618571518?s_bl=1&s_l=1&s_psm=1&s_sc=10159555618606518&s_sw=0&s_vt=api_dev&a=AbwE_aW8fbZXXS2F";
 
   eventHandler(result) {
     console.log("Event was fired with: " + result);
@@ -35,20 +35,22 @@
    }
  
 
-   _onPressHandler(key) {
+   _onPressStart(key) {
      // Calling FancyMath.add method
-     console.log("_onPressHandler " + key);
-     NativeModules.MediaStreaming.start(key,
-       /* callback */ function (result) {
-         Alert.alert("result", `${result}`);
-       });
+     NativeModules.MediaStreaming.start(key);
    }
+
+   _onPressCapture() {
+    // Calling FancyMath.add method
+    NativeModules.MediaStreaming.capture();
+  }
  
    render() {
      return (
        <View>
           <Text>key = {this.key}</Text>
-          <Button onPress={() => this._onPressHandler(this.key)} title="Click me!"/>
+          <Button onPress={() => this._onPressStart(this.key)} title="Click me!"/>
+          <Button onPress={() => this._onPressCapture()} title="capture"/>
        </View>);
    }
  }
